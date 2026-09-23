@@ -1,0 +1,23 @@
+spring:
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/allo_dakar}
+    username: ${SPRING_DATASOURCE_USERNAME:postgres}
+    password: ${SPRING_DATASOURCE_PASSWORD:sene}
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          # Auto-découverte via /.well-known/openid-configuration. Doit correspondre exactement
+          # au host utilisé par le CLIENT pour obtenir ses tokens (le "iss" du JWT est comparé
+          # littéralement) — piège classique en Docker Compose, voir README §13.
+          issuer-uri: ${KEYCLOAK_ISSUER_URI:http://localhost:8080/realms/allo-dakar}
+
+logging:
+  level:
+    sn.diafoune.allo_dakar: DEBUG
+    org.hibernate.SQL: DEBUG

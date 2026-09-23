@@ -1,0 +1,28 @@
+spring:
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/allo_dakar_test}
+    username: ${SPRING_DATASOURCE_USERNAME:allo_dakar_test}
+    password: ${SPRING_DATASOURCE_PASSWORD:allo_dakar_test}
+  jpa:
+    show-sql: false
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          # jwk-set-uri (et non issuer-uri) : évite un appel réseau bloquant à Keycloak au
+          # démarrage du contexte de test. Les tests d'intégration (SecurityAccessIntegrationTest)
+          # injectent directement un JwtAuthenticationToken via SecurityMockMvcRequestPostProcessors
+          # .jwt(...), donc ce JwtDecoder n'est en réalité jamais invoqué pour décoder quoi que ce
+          # soit — sa seule contrainte est de pouvoir être CONSTRUIT sans accès réseau.
+          jwk-set-uri: http://localhost:8081/realms/allo-dakar/protocol/openid-connect/certs
+
+app:
+  keycloak:
+    server-url: http://localhost:8081
+    realm: allo-dakar
+    admin-client-id: allo-dakar-backend-admin
+    admin-client-secret: test-secret
+
+logging:
+  level:
+    sn.diafoune.allo_dakar: INFO

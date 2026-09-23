@@ -1,0 +1,98 @@
+{
+  "realm": "allo-dakar",
+  "enabled": true,
+  "sslRequired": "external",
+  "registrationAllowed": true,
+  "registrationEmailAsUsername": true,
+  "loginWithEmailAllowed": true,
+  "resetPasswordAllowed": true,
+  "verifyEmail": false,
+  "editUsernameAllowed": false,
+  "accessTokenLifespan": 1800,
+  "ssoSessionIdleTimeout": 1209600,
+
+  "roles": {
+    "realm": [
+      { "name": "PASSENGER", "description": "Utilisateur pouvant rechercher et reserver des trajets" },
+      { "name": "DRIVER", "description": "Utilisateur pouvant publier des trajets" },
+      { "name": "ADMIN", "description": "Administrateur de la plateforme" },
+      { "name": "CUSTOMER_SERVICE", "description": "Support client" },
+      { "name": "MODERATOR", "description": "Moderation des avis et signalements" }
+    ]
+  },
+
+  "defaultRole": {
+    "name": "default-roles-allo-dakar",
+    "composite": true,
+    "composites": {
+      "realm": ["PASSENGER", "offline_access", "uma_authorization"]
+    }
+  },
+
+  "clients": [
+    {
+      "clientId": "allo-dakar-frontend",
+      "name": "Allo Dakar - Web/Mobile",
+      "description": "Client public utilise par le frontend web/mobile. Authorization Code + PKCE uniquement : jamais de secret partage a un client public.",
+      "enabled": true,
+      "publicClient": true,
+      "protocol": "openid-connect",
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false,
+      "redirectUris": [
+        "http://localhost:3000/*"
+      ],
+      "webOrigins": [
+        "+"
+      ],
+      "attributes": {
+        "pkce.code.challenge.method": "S256"
+      },
+      "defaultClientScopes": [
+        "web-origins",
+        "profile",
+        "email",
+        "roles"
+      ]
+    },
+    {
+      "clientId": "allo-dakar-backend-admin",
+      "name": "Allo Dakar - Backend (service account admin)",
+      "description": "Client confidentiel utilise UNIQUEMENT par KeycloakAdminClient (service account) pour desactiver un compte suspendu. Ne sert jamais a authentifier un utilisateur final.",
+      "enabled": true,
+      "publicClient": false,
+      "protocol": "openid-connect",
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": true,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "CHANGE_ME_MATCH_KEYCLOAK_ADMIN_CLIENT_SECRET_ENV_VAR"
+    }
+  ],
+
+  "users": [
+    {
+      "username": "service-account-allo-dakar-backend-admin",
+      "serviceAccountClientId": "allo-dakar-backend-admin",
+      "enabled": true,
+      "clientRoles": {
+        "realm-management": ["manage-users"]
+      }
+    },
+    {
+      "username": "admin.demo@allodakar.sn",
+      "email": "admin.demo@allodakar.sn",
+      "emailVerified": true,
+      "enabled": true,
+      "firstName": "Admin",
+      "lastName": "Demo",
+      "credentials": [
+        { "type": "password", "value": "ChangeMe123!", "temporary": true }
+      ],
+      "realmRoles": ["ADMIN", "offline_access", "uma_authorization"]
+    }
+  ]
+}
